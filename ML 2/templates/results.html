@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>ML Analysis Results</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-dark text-white text-center">
+    <div class="container mt-5">
+        <h1>📊 ML Model Performance</h1>
+        <p><strong>Dataset:</strong> {{ dataset_info['shape'][0] }} rows, {{ dataset_info['shape'][1] }} columns</p>
+
+        <canvas id="accuracyChart" class="mt-4"></canvas>
+
+        <h2 class="mt-4">🏆 Model Comparison</h2>
+        <table class="table table-dark table-bordered">
+            <tr>
+                <th>Model</th>
+                <th>Accuracy (%)</th>
+                <th>Precision (%)</th>
+                <th>Recall (%)</th>
+                <th>F1 Score (%)</th>
+            </tr>
+            {% for result in results %}
+            <tr>
+                <td>{{ result['model'] }}</td>
+                <td>{{ result['accuracy'] }}</td>
+                <td>{{ result['precision'] }}</td>
+                <td>{{ result['recall'] }}</td>
+                <td>{{ result['f1_score'] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <a href="/" class="btn btn-secondary">⬅️ Upload Another File</a>
+    </div>
+
+    <script>
+        const chartData = {{ chart_data | tojson | safe }};
+        new Chart(document.getElementById('accuracyChart'), {
+            type: 'bar',
+            data: {
+                labels: chartData.models,
+                datasets: [{
+                    label: 'Accuracy (%)',
+                    data: chartData.accuracies,
+                    backgroundColor: 'rgba(0, 230, 255, 0.7)'
+                }]
+            },
+            options: { responsive: true, scales: { y: { beginAtZero: true, max: 100 } } }
+        });
+    </script>
+</body>
+</html>
